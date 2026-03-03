@@ -35,7 +35,7 @@ const getProductos = async (req, res) => {
             conStock, 
             buscar, 
             pagina = 1, 
-            limite = 100, 
+            limite = 10, 
             incluirSubcategoria 
         }= req.query;
 
@@ -506,7 +506,7 @@ const eliminarProducto = async (req,res) => {
         //Respuesta exitosa
         res.json({
             success: true,
-            message: 'producto eliminada exitosamente'
+            message: 'Producto eliminado exitosamente'
         });
 
     } catch (error) {
