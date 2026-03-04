@@ -602,7 +602,7 @@ module.exports = {
     getMisPedidos,
     getPedidoById,
     cancelarPedido,
-    //aadmin
+    //admin
     getAllPedidos,
     actualizarEstadoPedido,
     getEstadisticasPedidos
