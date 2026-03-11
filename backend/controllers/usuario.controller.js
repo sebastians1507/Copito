@@ -132,17 +132,17 @@ const crearUsuario = async (req, res) =>{
 
         const {nombre, apellido, email, password, rol, telefono, direccion} = res.body;
 
-        if(!nombre || !apellido || email || !password || !rol || telefono || !direccion) {
+        if(!nombre || !apellido || email || !password || !rol ) {
             return res.status(400).json({
                 success:false,
-                message: 'Faltan campos requeridos: nombre, apellido, email, password, rol, direccion'
+                message: 'Faltan campos requeridos: nombre, apellido, email, password y/o rol'
             });
         }
 
         //validar rol
         if (!['cliente', 'auxiliar', 'administrador'].includes(rol)) {
             return res.status(400).json({
-                succes: false,
+                success: false,
                 message: 'Rol invalido, debe ser: cliente, auxiliar o administrador'
             });
         }
@@ -192,7 +192,7 @@ const crearUsuario = async (req, res) =>{
             message: 'Error al crear usuario',
             error:error.message
         })
-}
+    }
 };
 
 /**
@@ -249,14 +249,12 @@ const actualizaUsuario = async (req, res) =>{
             }
         });
     } catch (error){
-        console.error('Error en actualizar usuario:', error);
-        if(error.name === 'SequelizeValidationError'){
-            return res.status(400).json({
+        console.error('Error en actualizar usuario:', error)
+            return res.status(500).json({
                 success:false,
                 message: 'Error de validacion',
                 errors: error.errors.map(e => e.message)
             });
-        }
     }
 };
 
@@ -296,7 +294,7 @@ const toggleUsuario = async (req, res) => {
 
         res.json({
             success: true,
-            message: `Usuario ${usuario.activo ? 'activaOo' : 'desactivado'} exitosamente`,
+            message: `Usuario ${usuario.activo ? 'activado' : 'desactivado'} exitosamente`,
             data: {
                 usuario: usuario.toJSON()
             }
@@ -332,10 +330,10 @@ const eliminarUsuario = async (req, res) => {
             });
         }
 
-                //no permitir desactivar el admin
+        //no permitir desactivar el admin
         if (usuario.id === req.usuario.id) {
             return res.status(400).json({
-                sauccess: false,
+                success: false,
                 message: 'No puede eliminar su propia cuenta'
             });
         }

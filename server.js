@@ -111,7 +111,6 @@ app.use('/api/admin', adminRoutes);
 //rutas del cliente
 //requieren autenticacion y rol de cliente
 const clienteRoutes = require('./routes/cliente.routes');
-const { start } = require('repl');
 app.use('/api/cliente',clienteRoutes);
 
 //rutas manejo de rutas no encontradas (404)
@@ -186,7 +185,7 @@ const startServer = async (req, res) => {
 
         //paso 4 iniciar el servidor express
         app.listen(PORT, () => {
-            console.log('/n ______________________');
+            console.log('\n ______________________');
             console.log(`Servidor corriendo en el puerto ${PORT}`);
             console.log(`URL: http://localhost:${PORT}`);
             console.log(`Base de datos ${process.env.DB_NAME}`);
@@ -203,7 +202,7 @@ const startServer = async (req, res) => {
 //captura el ctrl+c para cerrar el servidor correctamente
 
 process.on('SIGINT', () => {
-    console.error('/n/n cerrando el servidor...');
+    console.error('\n\n cerrando el servidor...');
     process.exit(0);
 });
 

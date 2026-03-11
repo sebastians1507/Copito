@@ -20,10 +20,10 @@ const createDataBase = async () => {
         //Conectar a MySQL sin especificar base de datos
         console.log(' Conectando a MySQL...');
         connection = await mysql.createConnection({
-            host: Process.env.DB_HOST || 'localhost',
-            port: Process.env.DB_POST || 3306,
-            user: Process.env.DB_USER || 'root',
-            password: Process.env.DB_PASSWORD || '',
+            host: process.env.DB_HOST || 'localhost',
+            port: process.env.DB_POST || 3306,
+            user: process.env.DB_USER || 'root',
+            password: process.env.DB_PASSWORD || ''
         });
 
         console.log(' Conexion a MySQL establecida\n');
@@ -32,9 +32,9 @@ const createDataBase = async () => {
         const dbName = process.env.DB_NAME || 'ecommerce_db';
         console.log(`Creando base de datos: ${dbName}...`);
 
-        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}' creada/verificada exitosamente\n`);
+        await connection.query(`CREATE DATABASE IF NOT EXISTS \`'${dbName}' creada/verificada exitosamente\n`);
 
-        //Cerar conexion
+        //Cerrar conexion
         await connection.end();
 
         console.log(' ¡Proceso completado! Ahora puedes iniciar el servidor con: npm start\n');

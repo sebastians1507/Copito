@@ -35,16 +35,25 @@ const getProductos = async (req, res) => {
             conStock, 
             buscar, 
             pagina = 1, 
-            limite = 10, 
-            incluirSubcategoria 
-        }= req.query;
+            limite = 100, 
+        } = req.query;
 
-        //construir filtross
+        //construir filtros
         const where = {};
         if (categoriaId) where.categoriaId = categoriaId;
         if (subcategoriaId) where.subcategoriaId = subcategoriaId;
         if (activo !== undefined) where.activo = activo === 'true';
         if (conStock === 'true') where.stock = {[ require ('sequelize').Op.gt]: 0};
+
+        if(buscar) {
+            const {Op} = require('sequelize');
+            //op.or busca por nombre o descripcion
+            //op.like equivale a un like en sql con comodines para buscar coindencias parciales
+            where[Op.or] = [
+                {nombre: {[Op.like]: `%${buscar}`}},
+                {descripcion: {[Op.like]: `%${buscar}`}}
+            ];
+        }
 
         //paginacion
         const offset = (parseInt(pagina- 1))  * parseInt(limite);
@@ -75,7 +84,6 @@ const getProductos = async (req, res) => {
         // respuesta exitosa
         res.json({
             success: true,
-            count: productos.length,
             data:{
                 productos,
                 paginacion:{
@@ -110,7 +118,7 @@ const getProductoById = async (req, res) => {
         const {id}= req.param;
         
         // Buscar productos con relacion 
-        const producto = await Producto.findByPk (id,{
+        const producto = await Producto.findByPk(id,{
             include:[
                 {
                     model:Categoria,
@@ -165,10 +173,10 @@ const crearProducto = async (req, res) =>{
             precio, 
             stock, 
             categoriaId,
-            subcategoriaId} = res.body;
+            subcategoriaId} = req.body;
 
         //validacion 1 verificar campos requeridos
-        if(!nombre || !precio || !stock || !categoriaId ||subcategoriaId) {
+        if(!nombre || !precio || !categoriaId || !subcategoriaId) {
             return res.status(404).json({
                 success:false,
                 message: 'Faltan campos requeridos: nombre, precio, categoriaId, subcategoriaId'
@@ -225,11 +233,11 @@ const crearProducto = async (req, res) =>{
         if (parseInt(stock) < 0){
             return res.status(400).json({
                 success:false,
-                message: 'El stock del producto debe ser mayor a 0'
+                message: 'El stock del producto no puede ser negativo'
             });
         }
 
-        //obtener images
+        //obtener imagen
         const imagen = req.file ? req.file.filename : null;
 
         // crear producto
@@ -272,13 +280,6 @@ const crearProducto = async (req, res) =>{
         });
     } catch (error){
         console.error('Error en crearProducto:', error);
-        if(error.name === 'SequelizeValidationError'){
-            return res.status(400).json({
-                success: false,
-                message:'Error de validacion',
-                errors: error.errors.map(e => e.message)
-            });
-        }
 
         //si hubo un error eliminar imagen si se subio una imagen
         if (req.file){
@@ -372,7 +373,7 @@ const actualizarProducto = async (req, res) =>{
             if (stock !== undefined &&parseInt(stock) < 0){
                 return res.status(400).json({
                     success:false,
-                    message: 'El stock del producto debe ser mayor a 0'
+                    message: 'El stock del producto no puede ser negativo'
                 });
             }
 
@@ -584,7 +585,7 @@ const actualizarStock =  async (req, res) => {
 
             res.json({
                 success: true, 
-                message: `Stock ${oprecion === 'aumentar' ? 'aumentado' : operacion === 'reducir' ? 'reducido' : 'establecido'} exitosamente`,
+                message: `Stock ${operacion === 'aumentar' ? 'aumentado' : operacion === 'reducir' ? 'reducido' : 'establecido'} exitosamente`,
                 data: {
                     productoId : producto.id,
                     nombre: producto.nombre,

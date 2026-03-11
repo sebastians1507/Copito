@@ -7,13 +7,13 @@
 //Importamos jsinwebtoken para manejar los tokens 
 const jwt = require('jsonwebtoken');
 
-//Imporat dotenv para acceder a las variables de entorno
+//Importar dotenv para acceder a las variables de entorno
 require('dotenv').config();
 
 /**
  * Generar un token JWT para un usuario
  * 
- * @param {Object} payload - Datos que se incluira en el toke (id, email, rol)
+ * @param {Object} payload - Datos que se incluira en el token (id, email, rol)
  * @returns {String} - Token JWT generado
  */
 
@@ -76,7 +76,7 @@ const verifyToken = (token) => {
 
 const extractToken = (authHeader) => {
     // verifica que el header exista y empieza con "Bearer "
-    if (authHeader && authHeader.startsWith('Bearer ')) {
+    if (authHeader && authHeader.startsWith('Bearer ' )) {
         // Extraer solo el token (quitar "Bearer")
         return authHeader.substring(7);
     }

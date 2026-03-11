@@ -8,7 +8,7 @@
  */
 
 const Usuario = require ('../models/Usuario');
-const {generarToken} = require('../config/jwt');
+const {generateToken} = require('../config/jwt');
 
 
 
@@ -37,7 +37,7 @@ const registrar = async (req, res) => {
         //validacion 2 verificar formato de email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            return res.status(400),json({
+            return res.status(400).json({
                 success: false,
                 message: 'Formato de email invalido'
             });
@@ -52,7 +52,7 @@ const registrar = async (req, res) => {
         }
 
         //validacion 4 verificar que el email no este registrado
-        const usuarioExistente = await Usuario.finOne({where: {email}});
+        const usuarioExistente = await Usuario.findOne({where: {email}});
         if(usuarioExistente) {
             return res.status(400).json({
                 success: false,
@@ -91,18 +91,19 @@ const registrar = async (req, res) => {
         });
 
         //Respuesta exitosa
-        const usuarioRespuesta = nuevoUsuario.toJSON();
-        usuarioRespuesta.password;
+        const usuarioSinPassword = nuevoUsuario.toJSON();
+        delete usuarioSinPassword.password;
         res.status(201).json({
             success:true,
             message: 'Usuario registrado exitosamente',
             data:{
-                usuario: nuevoUsuario.toJSON()//convertir a json para excluir campos sensibles
+                usuario: usuarioSinPassword,
+                token
             }
         });
     }catch (error){
         console.error('Error en registrar');
-        return res.error(500).json({
+        return res.status(500).json({
             success: false,
             message: 'Error al registrar usuario',
             error: error.message
@@ -133,17 +134,17 @@ const iniciarSesion = async (req, res) =>{
 
         //validacion 2 buscar usuario por email
         //necesitamos incluir el password aqui normalmente se excluye por seguridad
-        const usuario = await Usuario.scope('conPassword').findOne({where: {email}});
+        const usuarioExistente = await Usuario.scope('withPassword').findOne({where: {email}});
 
-        if (!usuario){
+        if (!usuarioExistente){
             return res.status(401).json({
-                succes: false,
+                success: false,
                 message: 'Credenciales invalidas'
-            })
+            });
         }
 
         //validacion 3 verificar que el usuario este activo
-        if(!usuario.activo){
+        if(!usuarioExistente.activo){
             return res.status(401).json({
                 success: false,
                 message: 'Usuario inactivo, contacta al administrador'
@@ -162,14 +163,14 @@ const iniciarSesion = async (req, res) =>{
         }
 
         //generar token JWT con datos basicos del usuario
-        const token = generarToken({
-            id:usuario.id,
-            email: usuario.email,
-            rol: usuario.rol
+        const token = generateToken({
+            id:usuarioExistente.id,
+            email: usuarioExistente.email,
+            rol: usuarioExistente.rol
         });
 
         //preparar respuesta sin password
-        const usuarioSinPassword = usuario.toJSON();
+        const usuarioSinPassword = usuarioExistente.toJSON();
         delete usuarioSinPassword.password;
 
         //respuesta exitosa
@@ -183,8 +184,8 @@ const iniciarSesion = async (req, res) =>{
         });
     }catch (error) {
         console.error('Error en iniciarSesion');
-        return res.sataus(500).json({
-            succes: false,
+        return res.status(500).json({
+            success: false,
             message: 'Error al iniciar sesion',
             error: error.message
         })
@@ -198,7 +199,7 @@ const iniciarSesion = async (req, res) =>{
  * headres: {authorization: 'bearer token}
  */
 
-const getMe= async (res, req) => {
+const getMe= async (req, res) => {
     try{
         //el usuario ya esta en req.usuario 
         const usuario = await Usuario.findByPk(req.usuario.id, {
@@ -237,7 +238,7 @@ const updateMe = async (req, res) => {
     try{
         const {nombre, apellido, email, telefono, direccion} = req.body;
 
-        //buscar usuartrio
+        //buscar usuario
         const usuario = await Usuario.findByPk(req.usuario.id);
         if (!usuario){
             return res.status(404).json({
@@ -246,12 +247,19 @@ const updateMe = async (req, res) => {
             });
         }
 
-        //guaradr cambios
+        //actualizar campos si se proporcionan
+        if (nombre !== undefined) usuario.nombre = nombre;
+        if (apellido !== undefined) usuario.apellido = apellido;
+        if (telefono !== undefined) usuario.telefono = telefono;
+        if (direccion !== undefined) usuario.direccion = direccion;
+        if (email !== undefined) usuario.email = email;
+
+        //guardar cambios
         await usuario.save();
 
         //respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             message: 'Usuario actualizado exitosamente',
             data: {
                 usuario: usuario.toJSON()
@@ -338,5 +346,5 @@ module.exports = {
     iniciarSesion,
     getMe,
     updateMe,
-    changePassword,
+    changePassword
 }

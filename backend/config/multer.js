@@ -9,10 +9,10 @@
 const multer = require('multer');
 
 //Importar path para trabjaar con rutas de archivos
-const path = require('path');
+const path = require(`path`);
 
 // Importar fs para verificar /crear directorios 
-const fs = require('fs');
+const fs = require(`fs`);
 
 //importar dotenv para variables de entorno 
 require('dotenv').config();
@@ -33,7 +33,7 @@ if (!fs.existsSync(uploadPath)) {
 
 const storage = multer.diskStorage({
     /**
-     * Destination: define la carpeta destio donde se guardara el archivo
+     * Destination: define la carpeta destino donde se guardara el archivo
      * 
      * @param {Object} req - Objeto de peticion HTTP
      * @param {Object} file - Archivo que esta subiendo
@@ -90,7 +90,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
-    limist: {
+    limit: {
         //Limite de tamaño del archino en bytes
         //por defecto 5MB (5 * 1024) 5242800 bytes
         fileSize: parseInt(process.env.MAX_FILE_SIZE) || 5242800

@@ -11,8 +11,8 @@ const Carrito = require('../models/Carrito');
 const Producto = require('../models/producto');
 const Usuario = require('../models/Usuario');
 const Categoria = require('../models/Categoria');
-const Subcategoria = require('../models/Subcategoria');const Usuario = require('../models/Usuario');
-const { group } = require('console');
+const Subcategoria = require('../models/Subcategoria');
+
 
 /**
  * Crear pedido desde el carrito (checkout)
@@ -55,7 +55,7 @@ const crearPedido = async (req, res) => {
         }
 
         //obtener items del carrito
-        const carritoItems = await Carrito.findAll({
+        const itemsCarrito = await Carrito.findAll({
             where: { usuarioId: req.usuario.id },
             include: [{
                     model: Producto,
@@ -77,7 +77,7 @@ const crearPedido = async (req, res) => {
         const erroresValidacion = [];
         let totalPedido = 0;
 
-        for (const item of itemsCarritos) {
+        for (const item of itemsCarrito) {
             const producto = item.producto;
 
             //verificar si el producto esta activo 
@@ -93,7 +93,7 @@ const crearPedido = async (req, res) => {
             }
 
             //calcular total del pedido
-            totalPedido = parseFloat(item.precioUnitario )* item.cantidad;
+            totalPedido += parseFloat(item.precioUnitario )* item.cantidad;
         }
 
         //si hay errores de validacion retornar
@@ -108,7 +108,7 @@ const crearPedido = async (req, res) => {
 
         //crear pedido
         const pedido = await Pedido.create({
-            usuarioId: req.user.usuarioId,
+            usuarioId: req.usuario.id,
             total: totalPedido,
             estado: 'pendiente',
             direccionEnvio,
@@ -120,7 +120,7 @@ const crearPedido = async (req, res) => {
         //crear detalles del pedido y actualizar stock
         const detallesPedido = [];
 
-        for (const item of carritoItems) {
+        for (const item of itemsCarrito) {
             const producto = item.producto;
 
             //crear detalle
@@ -196,7 +196,7 @@ const crearPedido = async (req, res) => {
 
 const getMisPedidos = async (req,res) => {
     try{
-        const {estado, pagina = 1, limite=10} = req.query;
+        const {estado, pagina = 1, limite = 10} = req.query;
 
         //filtros 
         const where = {

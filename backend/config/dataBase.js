@@ -6,11 +6,11 @@ const { Sequelize } = require('sequelize');
 //Importar dotenv para variables de entorno
 require('dotenv').config();
 
-//Crear instamcias de secualize
+//Crear instancias de sequelize
 const sequelize = new Sequelize(
-    Process.env.DB_NAME,
-    Process.env.DB_USER,
-    Process.env.DB_PASSWORD,
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
     {
         host: process.env.DB_HOST,
         port: process.env.DB_PORT,
@@ -25,16 +25,16 @@ const sequelize = new Sequelize(
             idle: 10000 // Tiempo máximo que una conexión puede estar inactiva antes de ser liberada
         },
         // Configuracion de logging
-        //Permmite ver las consultas mysql por consola
+        //Permite ver las consultas mysql por consola
         logging: process.env.NODE_ENV === 'development' ? console.log : false,
 
         //Zona horaria
-        timezone: '.05:00', //Zona horaria de Colombia
+        timezone: '-05:00', //Zona horaria de Colombia
 
         // Opciones adicionales
         define: {
             // timestamps : true crea automaticamente los campos createAt y updateAt
-            timestramps: true,
+            timestamps: true,
 
             //underscored: true usa snake_case para nombres de las columnas
             undescored: false,
@@ -56,7 +56,7 @@ const testConnection = async () => {
         return true;
     } catch (error) {
         console.error('X Error al conectar con MySQL:', error.message);
-        console.error('Verifique que XAMpp este corriendo y las credenciales en .env sean correctas');
+        console.error('Verifique que XAMPP este corriendo y las credenciales en .env sean correctas');
         return false;
     }
 };
@@ -87,7 +87,7 @@ const syncDatabase = async (force = false, alter = false) => {
     }
 };
 // Exportar la instancia de sequelize y las funciones
-Module.exports = {
+module.exports = {
     sequelize,
     testConnection,
     syncDatabase
