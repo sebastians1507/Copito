@@ -31,7 +31,7 @@ router.get('/me', verificarAuth, getMe);
 
 router.put('/me', verificarAuth, updateMe);
 
-router.patch('/me/password', verificarAuth, changePassword);
+router.patch('/change-password', verificarAuth, changePassword);
 
 //exportar router
 module.exports = router;

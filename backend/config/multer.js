@@ -9,10 +9,10 @@
 const multer = require('multer');
 
 //Importar path para trabjaar con rutas de archivos
-const path = require(`path`);
+const path = require('path');
 
 // Importar fs para verificar /crear directorios 
-const fs = require(`fs`);
+const fs = require('fs');
 
 //importar dotenv para variables de entorno 
 require('dotenv').config();

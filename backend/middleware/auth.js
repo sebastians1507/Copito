@@ -6,9 +6,7 @@
  */
 
 //Importar funciones de JWT
-const jwt = { verifyToken, extractToken} = require('../config/jwt');
-
-const { extractToken } = require('../config/jwt')
+const { verifyToken, extractToken } = require('../config/jwt');
 
 //Importar modelo de usuario
 const Usuario = require('../models/Usuario');
@@ -18,7 +16,7 @@ const Usuario = require('../models/Usuario');
 const verificarAuth = async (req, res, next) => {
     try {
         //Paso 1 obtener el token del header authorization
-        const authHeader = req.header = req.headera.authorization;
+        const authHeader = req.header = req.headers.authorization;
 
         if (!authHeader) {
             return res.status(401). json({
@@ -38,14 +36,14 @@ const verificarAuth = async (req, res, next) => {
         }
 
         //Paso 2 verificar el token 
-        let decoded; //Funcion para decoodificar el token 
+        let decoded; //Funcion para decodificar el token 
         try {
             decoded = verifyToken(token);
 
         } catch (error) {
             return res.status(401).json({
                 success: false,
-                message: error.message // token expiriado del token o invalido
+                message: error.message // token expirado o invalido
             });
         }
 
@@ -57,7 +55,7 @@ const verificarAuth = async (req, res, next) => {
         if (!usuario) {
             return res.status(401).json({
                 success: false,
-                message: 'usuario no encontrado'
+                message: 'Usuario no encontrado'
             });
         }
 
@@ -66,7 +64,7 @@ const verificarAuth = async (req, res, next) => {
         if (!usuario.activo) {
             return res.status(401).json({
                 success: false,
-                message: 'Usuario no activo contacte al administrador'
+                message: 'Usuario inactivo, contacte al administrador'
             });
         }
 
@@ -80,20 +78,20 @@ const verificarAuth = async (req, res, next) => {
         console. error('Error en el middleware de autenticacion', error);
         return res.status(500).json({
             success: false,
-            message: 'Error en el verificacion de autenticacion',
+            message: 'Error en la verificacion de autenticacion',
             error: error.message
         });
     }
 };
 
 /**
- * middleware es opcional de aunteticacion
- * similar a verificarAuth pero no retorna error si no hay token 
- * es para rutas que no requieren autenticacion 
+ * middleware es opcional de autenticacion
+ * similar a verificarAuth pero no retorna error si no hay token
+ * es para rutas que no requieren autenticacion
  */
 const verificarAuthOpcional = async (req, res, next) => {
     try {
-        const authHeader = req.header.authorization;
+        const authHeader = req.headers.authorization;
 
         // Si no hay token continuar sin autenticar
         if (!authHeader) {

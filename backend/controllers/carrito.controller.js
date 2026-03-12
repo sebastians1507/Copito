@@ -9,7 +9,6 @@ const Carrito = require('../models/Carrito');
 const Producto = require('../models/producto');
 const Categoria = require('../models/Categoria');
 const Subcategoria = require('../models/Subcategoria');
-const { it } = require('node:test');
 
 /**
  * obtener carrito del usuario autenticado
@@ -37,7 +36,7 @@ const getCarrito = async (req, res) => {
                             model: Subcategoria,
                             as: 'subcategoria',
                             attributes: ['id', 'nombre']
-                        },
+                        }
                     ]
                 }
             ],
@@ -45,7 +44,7 @@ const getCarrito = async (req, res) => {
         });
 
         //Calcular el total del carrito
-        let totalCarrito = 0;
+        let total = 0;
         itemsCarrito.forEach(item => {
             total += parseFloat(item.precioUnitario) * item.cantidad;
         });
@@ -96,7 +95,7 @@ const agregarAlCarrito = async (req, res) => {
         if (cantidadNum < 1) {
             return res.status(400).json({
                 success: false,
-                message: 'La cantidad debe ser mayor a 0'
+                message: 'La cantidad debe ser minimo 1'
             });
         }
 

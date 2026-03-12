@@ -539,7 +539,7 @@ const actualizarEstadoPedido = async (req, res) => {
  * Get/ api/ admin/ pedidos/ estadisticas
  */
 
-const getEstadisticasPedidos =  async (res, res) => {
+const getEstadisticasPedidos =  async (req, res) => {
     try{
         const {Op, fn, col} = require('sequelize');
 

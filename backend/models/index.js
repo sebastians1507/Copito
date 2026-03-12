@@ -10,7 +10,7 @@ const Usuario = require('./Usuario');
 const Categoria = require('./Categoria');
 const Subcategoria = require('./Subcategoria');
 const Producto = require('./producto');
-const Carrito = require('./carrito');
+const Carrito = require('./Carrito');
 const Pedido = require('./Pedido');
 const DetallePedido= require('./detallePedido');
 

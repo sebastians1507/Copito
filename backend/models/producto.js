@@ -116,7 +116,7 @@ const Producto = sequelize.define('Producto', {
      * Esta es la relacion con la tabla categoria
      */
     categoriaId: {
-        type: DataTypes.INTERGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: 'categorias', //nombre de la tabla relacionada
@@ -180,7 +180,7 @@ const Producto = sequelize.define('Producto', {
          * valida que la subcategoria y que la categoria este activa
          */
         beforeCreate: async (producto) => {
-            const Categoria = require('./Categoria'); //No lee la ruta con C nayuscula
+            const Categoria = require('./Categoria'); //No lee la ruta con C mayuscula
             const Subcategoria = require('./Subcategoria');
 
             //Buscar subcategoria padre
@@ -271,12 +271,12 @@ Producto.prototype.reducirStock = async function (cantidad) {
 };
 
 /**
- * Metofo para aumnetar el stock
+ * Metodo para aumentar el stock
  * util al cancelar una venta o reccibir inventario
- * @param {number} cantidad - cantidad a aumentra
+ * @param {number} cantidad - cantidad a aumentar
  * @returns {Promise<Producto>} producto actualizado
  */
-Producto.prototype.aumenarStock = async function (cantidad) {
+Producto.prototype.aumentarStock = async function (cantidad) {
     this.stock += cantidad;
     return await this.save();
 };

@@ -8,8 +8,7 @@
 const { DataTypes } = require("sequelize");
 
 //Importar la instancia de Sequelize para definir el modelo
-const sequelize = require("../config/database");
-const { table, timeStamp } = require("console");
+const { sequelize } = require("../config/database");
 
 /**
  * Definir el modelo de categoría utilizando sequelize.define()
@@ -152,21 +151,19 @@ const Carrito = sequelize.define("carrito",{
        * verifica si el campo "activo" ha cambiado a false (desactivado) y si es así, desactiva todas las subcategorías asociadas a esa categoría para mantener la integridad de los datos, esto ayuda a evitar problemas con productos que pertenecen a subcategorías desactivadas.
        * Si se activa una categoría (activo cambia a true), no se activan automáticamente las subcategorías o productos asociados, esto se deja a discreción del administrador para evitar activar subcategorías o productos que podrían no estar listos para ser activados.
        */
-      BeforeUpdate: async (itemcarrito) => {
+      beforeUpdate: async (itemcarrito) => {
         //Verificar si el campo "cantidad" ha cambiado a false (desactivado)
-
         if (itemcarrito.changed("cantidad")) {
           const producto = require("./producto");
-          const producto = await producto.findByPk(itemcarrito.productoId);
-          if (!prducto) {
+          const productoEncontrado = await producto.findByPk(itemcarrito.productoId);
+          if (!productoEncontrado) {
             throw new Error(
-              "El producto asociado a este item de carrito no existe", //Mensaje de error personalizado si se intenta actualizar un item de carrito con un producto que no existe
+              "El producto asociado a este item de carrito no existe",
             );
           }
-
-          if (!producto.hayStock(itemcarrito.cantidad)) {
+          if (!productoEncontrado.hayStock(itemcarrito.cantidad)) {
             throw new Error(
-              `Stock insuficiente, solo hay ${prducto.stock} unidades disponibles`, //Mensaje de error personalizado si se intenta actualizar un item de carrito con una cantidad que excede el stock disponible del producto
+              `Stock insuficiente, solo hay ${productoEncontrado.stock} unidades disponibles`,
             );
           }
         }
@@ -191,12 +188,10 @@ Carrito.prototype.calcularSubtotal = function () {
  */
 Carrito.prototype.actualizarCantidad = async function (nuevaCantidad) {
   const producto = require("./producto");
-
-  const producto = await producto.findByPk(this.productoId);
-
-  if (!prducto.hayStock(nuevaCantidad)) {
+  const productoEncontrado = await producto.findByPk(this.productoId);
+  if (!productoEncontrado.hayStock(nuevaCantidad)) {
     throw new Error(
-      `Stock insuficiente, solo hay ${prducto.stock} unidades disponibles`,
+      `Stock insuficiente, solo hay ${productoEncontrado.stock} unidades disponibles`,
     );
   }
   this.cantidad = nuevaCantidad;
@@ -208,9 +203,9 @@ Carrito.prototype.actualizarCantidad = async function (nuevaCantidad) {
  * @param {number} usuarioId - El ID del usuario para el cual se desea obtener el carrito completo
  * @returns {Promise} Un array de items de carrito con la información del producto asociado a cada item, o un error si no se encuentra ningún item de carrito para el usuario proporcionado.
  */
-carrito.obtenerCarritoUsuario = async function (usuarioId) {
+Carrito.obtenerCarritoUsuario = async function (usuarioId) {
   const Producto = require("./producto");
-  return await carrito.findAll({
+  return await Carrito.findAll({
     where: { usuarioId },
     include: [
       {
@@ -218,7 +213,7 @@ carrito.obtenerCarritoUsuario = async function (usuarioId) {
         as: 'producto'
       },
     ],
-    order: [['createdAt', 'DESC']] //Ordenar por fecha de creación, el item más reciente primero
+    order: [['createdAt', 'DESC']]
   });
 };
 
@@ -227,12 +222,11 @@ carrito.obtenerCarritoUsuario = async function (usuarioId) {
  * @param {number} usuarioId - El ID del usuario para el cual se desea calcular el total del carrito
  * @returns {Promise<number>} El total del carrito calculado a partir de los items de carrito asociados al usuario, o un error si no se encuentra ningún item de carrito para el usuario proporcionado.
  */
-carrito.calcularTotalCarrito = async function (usuarioId) {
-  const items = await carrito.findAll({ where: { usuarioId } });
-
+Carrito.calcularTotalCarrito = async function (usuarioId) {
+  const items = await Carrito.findAll({ where: { usuarioId } });
   let total = 0;
   for (const item of items) {
-    total += item.calcularSubtotal(); //Suma el subtotal de cada item al total
+    total += item.calcularSubtotal();
   }
   return total;
 };
@@ -242,10 +236,10 @@ carrito.calcularTotalCarrito = async function (usuarioId) {
  * @param {number} usuarioId
  * @return {Promise<number>}
  */
-carrito.vaciarCarrito = async function (paramusuarioId) {
-    return await this.detroy({
-        where: { usuarioId }
-    });
+Carrito.vaciarCarrito = async function (usuarioId) {
+  return await Carrito.destroy({
+    where: { usuarioId }
+  });
 };
 
 //Exportar modelo

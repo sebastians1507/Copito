@@ -42,7 +42,7 @@ router.put('/catalogo', categoriaController.actualizaCategoria);
 router.patch('/categorias/:id/toggle', categoriaController.toggleCategoria);
 
 // DELETE/ api/admin/categorias
-router.delete('/categorias/:id', esAdmin,categoriaController.eliminarCategoria);
+router.delete('/categorias/:id', soloAdministrador,categoriaController.eliminarCategoria);
 
 
 
@@ -66,7 +66,7 @@ router.put('/subcategorias', subcategoriaController.actualizarSubcategoria);
 router.patch('/subcategorias/:id/toggle', subcategoriaController.toggleSubcategoria);
 
 // DELETE/ api/admin/subcategorias
-router.delete('/subcategorias/:id', esAdmin,subcategoriaController.eliminarSubcategoria);
+router.delete('/subcategorias/:id', soloAdministrador,subcategoriaController.eliminarSubcategoria);
 
 
 // Rutas de productos
@@ -92,7 +92,7 @@ router.patch('/productos/:id/toggle', productoController.toggleProducto);
 router.patch('/productos/:id/stock', productoController.actualizarStock);
 
 // DELETE/ api/admin/productos
-router.delete('/productos/:id', esAdmin,productoController.eliminarProducto);
+router.delete('/productos/:id', soloAdministrador,productoController.eliminarProducto);
 
 //RUTAS DE USUARIOS
 // GET/ api/admin/usuarios/stats
@@ -105,16 +105,16 @@ router.get('/usuarios', usuarioController.getUsuarios);
 router.get('/usuarios/:id', usuarioController.getUsuarioById);
 
 // POST/ api/admin/usuarios
-router.post('/usuarios', esAdmin, usuarioController.crearUsuario);
+router.post('/usuarios', soloAdministrador, usuarioController.crearUsuario);
 
 // PUT/ api/admin/usuarios/:id
-router.put('/usuarios/:id',esAdmin, usuarioController.actualizaUsuario);
+router.put('/usuarios/:id',soloAdministrador, usuarioController.actualizaUsuario);
 
 // PATCH/ api/admin/usuarios/:id/toggle desactivar o activar usuarios
-router.patch('/usuarios/:id/toggle',esAdmin, usuarioController.toggleUsuario);
+router.patch('/usuarios/:id/toggle',soloAdministrador, usuarioController.toggleUsuario);
 
 // DELETE/ api/admin/usuarios
-router.delete('/usuarios/:id', esAdmin,usuarioController.eliminarUsuario);
+router.delete('/usuarios/:id', soloAdministrador,usuarioController.eliminarUsuario);
 
 //RUTAS DE PEDIDOS
 // GET/ api/admin/pedidos

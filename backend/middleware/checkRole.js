@@ -9,7 +9,7 @@ const esAdmin = (req, res, next) => {
         if (!req.usuario) {
             return res.status(401).json({
                 success: false,
-                message: 'usuario no auntenticado por favor inicia sesion'
+                message: 'Usuario no autenticado por favor inicia sesion'
             });
         }
 
@@ -42,7 +42,7 @@ const esCliente = (req, res, next) => {
         if (!req.usuario) {
             return res.status(401).json({
                 success: false,
-                message: 'usuario no auntenticado por favor inicia sesion'
+                message: 'Usuario no autenticado por favor inicia sesion'
             });
         }
 
@@ -96,7 +96,7 @@ const tieneRol = (req, res, next) => {
             console.error('Error en el mddleware de tiene rol', error);
             return res.status(500).json({
                 success: false,
-                message: 'Error en la verificacion de rol no tiene permisos',
+                message: 'Error en la verificacion de rol, no tiene permisos',
                 error: error.message
             });
         }
@@ -113,7 +113,7 @@ const esPropioUsuarioOAdmin = (req, res, next) => {
             if (!req.usuario) {
                 return res.status(401).json({
                     success: false,
-                    message: 'usuario no auntenticado por favor inicia sesion'
+                    message: 'Usuario no autenticado, por favor inicia sesion'
                 });
             }
 
@@ -190,7 +190,7 @@ const esPropioUsuarioOAdmin = (req, res, next) => {
             if (!req.usuario) {
                 return res.status(401).json({
                     success: false,
-                    message: 'usuario no auntenticado por favor inicia sesion'
+                    message: 'Usuario no autenticado por favor inicia sesion'
                 });
             }
 
@@ -198,7 +198,7 @@ const esPropioUsuarioOAdmin = (req, res, next) => {
             if (req.usuario.rol !== 'administrador') {
                 return res.status(403).json({
                     success: false,
-                    message: 'Acceso denegado solo administradores puede realizar esta operacion'
+                    message: 'Acceso denegado, solo administradores pueden realizar esta operacion'
                 });
             }
 
@@ -206,7 +206,7 @@ const esPropioUsuarioOAdmin = (req, res, next) => {
             next();
 
     } catch (error) {
-            console.error('Error en el mddleware soloAdministrador', error);
+            console.error('Error en el middleware soloAdministrador', error);
             return res.status(500).json({
                 success: false,
                 message: 'Error en la verificacion de permisos',
