@@ -11,7 +11,7 @@ const { DataTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
 
 //importar instancia de sequelize
-const { sequelize } = require('../config/database');
+const { sequelize } = require('../config/dataBase');
 const { dir } = require('console');
 
 /**

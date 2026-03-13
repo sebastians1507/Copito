@@ -17,7 +17,7 @@ const path = require('path');
 require('dotenv').config();
 
 //importar configuracion de la base de datos
-const dbConfig = require('./config/database');
+const { testConnection, syncDatabase: syncDataBase } = require('./config/dataBase');
 
 //importar modelos y asociaciones
 const {innitAssociations} = require('./models');
@@ -140,7 +140,7 @@ app.use((err, req, res, next) => {
     res.status(500).json({
         success: false,
         message: err.message ||'Error interno del servidor',
-        ...(process.env.NOE_ENV === 'development' && {stack: err.stack})
+        ...(process.env.NODE_ENV === 'development' && {stack: err.stack})
     })
 });
 
@@ -173,7 +173,7 @@ const startServer = async (req, res) => {
         //en desarrollo alter puede ser true para actualizar la estructura 
         //en produccion debe ser false para no perder datos
         const alterTables = process.env.NODE_ENV === 'development';
-        const dbSynced = await syncDatabase(false, alterTables);
+        const dbSynced = await syncDataBase(false, alterTables);
 
         if(!dbSynced) {
             console.error('No se pudo sincronizar la base de datos');
@@ -202,7 +202,7 @@ const startServer = async (req, res) => {
 //captura el ctrl+c para cerrar el servidor correctamente
 
 process.on('SIGINT', () => {
-    console.error('\n\n cerrando el servidor...');
+    console.error('\n\n Cerrando el servidor...');
     process.exit(0);
 });
 

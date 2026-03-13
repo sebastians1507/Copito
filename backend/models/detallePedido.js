@@ -9,7 +9,7 @@
 const { DataTypes } = require("sequelize");
 
 //Importar la instancia de Sequelize para definir el modelo
-const { sequelize } = require("../config/database");
+const { sequelize } = require("../config/dataBase");
 
 
 /**
@@ -200,7 +200,7 @@ return total;
  * @returns {Promise<number>} total del carrito
  */
 DetallePedido.obtenerMasVendidos = async function (limite=10) {
-    const { sequelize } = require ('../config/database');
+    const { sequelize } = require ('../config/dataBase');
     return await this.findAll({
         attributes: [
             'productoId',

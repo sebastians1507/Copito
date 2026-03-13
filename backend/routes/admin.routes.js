@@ -76,8 +76,6 @@ router.get('/productos', productoController.getProductos);
 // GET/ api/admin/productos/:id
 router.get('/productos/:id', productoController.getProductoById);
 
-// GET/ api/admin/productos/:id/stats
-router.get('/productos/:id/stats', productoController.getEstadisticasProducto);
 
 // POST/ api/admin/Productos
 router.post('/productos', productoController.crearProducto);
@@ -118,7 +116,7 @@ router.delete('/usuarios/:id', soloAdministrador,usuarioController.eliminarUsuar
 
 //RUTAS DE PEDIDOS
 // GET/ api/admin/pedidos
-router.get('/pedidos', pedidoController.getMisPedidos);
+router.get('/pedidos', pedidoController.getAllPedidos);
 
 // GET/ api/admin/pedidos/:id
 router.get('/pedidos/:id', pedidoController.getPedidoById);
@@ -129,7 +127,7 @@ router.get('/pedidos/:id/stats', pedidoController.getEstadisticasPedidos);
 // POST/ api/admin/pedidos
 router.post('/pedidos', pedidoController.crearPedido);
 
-// PUT/ api/admin/pedidos
-router.put('/pedidos', pedidoController.actualizarEstadoPedido);
+// PUT/ api/admin/pedidos/:id
+router.put('/pedidos/:id', pedidoController.actualizarEstadoPedido);
 
 module.exports = router;

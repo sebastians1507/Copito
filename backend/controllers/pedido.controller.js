@@ -8,7 +8,7 @@
 const Pedido = require('../models/Pedido');
 const detallePedido = require('../models/detallePedido');
 const Carrito = require('../models/Carrito');
-const Producto = require('../models/producto');
+const Producto = require('../models/producto'); // Usar minúscula para coincidir con el archivo real
 const Usuario = require('../models/Usuario');
 const Categoria = require('../models/Categoria');
 const Subcategoria = require('../models/Subcategoria');
@@ -20,7 +20,7 @@ const Subcategoria = require('../models/Subcategoria');
  */
 
 const crearPedido = async (req, res) => {
-    const {sequelize} = require('./config/dataBase');
+    const { sequelize } = require('../config/dataBase');
     const t = await sequelize.transaction();
 
     try {
@@ -60,7 +60,7 @@ const crearPedido = async (req, res) => {
             include: [{
                     model: Producto,
                     as: 'producto',
-                    attibutes: ['id', 'nombre', 'precio', 'stock', 'imagen', 'activo'],
+                    attributes: ['id', 'nombre', 'precio', 'stock', 'imagen', 'activo'],
             }],
             transaction : t
         });
@@ -170,7 +170,7 @@ const crearPedido = async (req, res) => {
 
         //respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             message: 'Pedido creado exitosamente',
             data: {
                 pedido
@@ -208,7 +208,7 @@ const getMisPedidos = async (req,res) => {
         const offset = (parseInt(pagina - 1))* parseInt(limite);
 
         //consultar pedidos
-        const {count, rows: pedidos} = await Pedido.findAndCoutnAll({
+        const {count, rows: pedidos} = await Pedido.findAndCountAll({
             where,
             include: [
                 {
@@ -217,7 +217,7 @@ const getMisPedidos = async (req,res) => {
                     include: [{
                         model: Producto,
                         as: 'producto',
-                        atributes: ['id', 'nombre', 'imagen']
+                        attributes: ['id', 'nombre', 'imagen']
                     }]
                 }
             ],
@@ -228,7 +228,7 @@ const getMisPedidos = async (req,res) => {
 
         //respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             message: 'Pedidos obtenidos exitosamente',
             data: {
                 pedidos,
@@ -267,7 +267,7 @@ const getPedidoById =  async (req, res) => {
         }
 
         //buscar pedido
-        const pedido = await Pedido.finOne({
+        const pedido = await Pedido.findOne({
             where,
             include: [
                 {
@@ -331,7 +331,7 @@ const getPedidoById =  async (req, res) => {
  */
 
 const cancelarPedido = async (req, res) => {
-    const {sequelize} = require('./config/dataBase');
+    const {sequelize} = require('../config/dataBase');
     const t = await sequelize.transaction()
     try {
         const {id} = req.params;
@@ -359,7 +359,7 @@ const cancelarPedido = async (req, res) => {
         if (!pedido) {
             await t.rollback();
             return res.status(404).json({
-                succes: false,
+                success: false,
                 message: 'Pedido no encontrado'
             });
         }
@@ -368,7 +368,7 @@ const cancelarPedido = async (req, res) => {
         if (pedido.estado !== 'pendiente') {
             await t.rollback();
             return res.status(400).json({
-                succes: false,
+                success: false,
                 message: `No se puede cancelar el pedido en estado ${pedido.estado}`
             });
         }
@@ -388,7 +388,7 @@ const cancelarPedido = async (req, res) => {
         
         //respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             message: 'Pedido cancelado exitosamente',
             data:{
                 pedido
@@ -424,7 +424,7 @@ const getAllPedidos = async (req, res) => {
         const offset = (parseInt(pagina) - 1) * parseInt(limite);
 
         //consultar pedidos
-        const {count, rows: pedidos} = await Pedido.findOne({
+        const {count, rows: pedidos} = await Pedido.findAndCountAll({
             where,
             include: [
                 {
@@ -451,7 +451,7 @@ const getAllPedidos = async (req, res) => {
 
         //respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             data: {
                 pedidos,
                 paginacion: {
@@ -509,7 +509,7 @@ const actualizarEstadoPedido = async (req, res) => {
         await pedido.reload({
             include: [
                 {
-                    mode:Usuario,
+                    model: Usuario,
                     as: 'usuario',
                     attributes: ['id', 'nombre', 'email']
                 }
@@ -518,7 +518,7 @@ const actualizarEstadoPedido = async (req, res) => {
 
         //respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             message: 'Estado del pedido actualizado exitosamente',
             data: {
                 pedido
@@ -550,8 +550,8 @@ const getEstadisticasPedidos =  async (req, res) => {
         const pedidosPorEstado = await Pedido.findAll({
             attributes: [
                 'estado',
-                [fn('COUNT', col('id'), 'estado')],
-                [fn('SUM', col('id'), 'totalVentas')]
+                [fn('COUNT', col('id'), 'cantidad')],
+                [fn('SUM', col('total'), 'totalVentas')]
             ],
             group: ['estado']
         });
@@ -573,14 +573,14 @@ const getEstadisticasPedidos =  async (req, res) => {
 
         //respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             data: {
                 totalPedidos,
                 pedidosHoy,
                 ventasTotales: parseFloat(totalVentas || 0).toFixed(2),
                 pedidosPorEstado: pedidosPorEstado.map(p => ({
                     estado: p.estado,
-                    cantidad: parseInt(p.getDataValue('cantdad')),
+                    cantidad: parseInt(p.getDataValue('cantidad')),
                     totalVentas: parseFloat(p.getDataValue('totalVentas') || 0).toFixed(2)
                 })),
             }
