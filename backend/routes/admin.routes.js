@@ -126,9 +126,6 @@ router.get('/pedidos/:id', pedidoController.getPedidoById);
 // GET/ api/admin/pedidos/:id/stats
 router.get('/pedidos/:id/stats', pedidoController.getEstadisticasPedidos);
 
-// GET/ api/admin/pedidos/:id
-router.get('/pedidos/:id', pedidoController.getAllPedidos);
-
 // POST/ api/admin/pedidos
 router.post('/pedidos', pedidoController.crearPedido);
 
